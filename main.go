@@ -11,22 +11,25 @@ func main() {
 	path := "_/The_Wire/"
 	ep := "S01E01"
 
+	if len(os.Args) > 1 {
+		ep = os.Args[1]
+	}
+
 	srt_file := path + ep + ".srt"
 	mkv_file := path + ep + ".mkv"
 
 	f, err := os.Open(srt_file)
 	if err != nil {
-		fmt.Println(err.Error())
-		panic("no")
+		panic(err.Error())
 	}
 
+	caption.ClearTmp()
 	subtitles := caption.ParseSrt(f)
-	for _, s := range subtitles {
+	for i, s := range subtitles {
+		fmt.Printf("%d/%d - %+v", i+1, len(subtitles), s)
 		fmt.Printf("%+v\n", s)
 		caption.TempSrt(s)
 		ffmpeg.Trim(mkv_file, s)
 		ffmpeg.AddSubtitles(s)
-		//ffmpeg(mkv_file, srt_file, s)
-		//fmt.Printf("%d/%d - %s\n", i, len(subtitles), s.Subtitle)
 	}
 }
