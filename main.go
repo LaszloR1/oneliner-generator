@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"oneliner-generator/caption"
 	"oneliner-generator/ffmpeg"
+	"oneliner-generator/util"
 	"os"
 )
 
@@ -23,7 +24,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	caption.ClearTmp()
+	util.ClearTmp()
 	subtitles := caption.ParseSrt(f)
 	for i, s := range subtitles {
 		fmt.Printf("%d/%d - %+v", i+1, len(subtitles), s)

@@ -3,7 +3,7 @@ package caption
 import (
 	"bufio"
 	"fmt"
-	"io/fs"
+	"oneliner-generator/util"
 	"os"
 	"strconv"
 	"strings"
@@ -16,7 +16,7 @@ func ParseSrt(f *os.File) Subtitles {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		id, err := strconv.Atoi(scanner.Text())
+		id, err := strconv.Atoi(util.DirtyBomFix(scanner.Text()))
 		if err != nil {
 			continue
 		}
@@ -45,10 +45,5 @@ func parseSubtitles(scanner *bufio.Scanner) (string, string) {
 }
 
 func TempSrt(s Subtitle) {
-	os.WriteFile(fmt.Sprintf("_/tmp/%d.srt", s.Id), []byte(fmt.Sprintf("1\n00:00:00,000 --> 00:01:00,000\n%s\n%s\n", s.Line1, s.Line2)), os.ModeAppend)
-}
-
-func ClearTmp() {
-	os.RemoveAll("/_/tmp/")
-	os.MkdirAll("/_/tmp/", fs.ModeDir)
+	util.TmpFile(fmt.Sprintf("%d.srt", s.Id), fmt.Sprintf("1\n00:00:00,000 --> 00:01:00,000\n%s\n%s\n", s.Line1, s.Line2))
 }

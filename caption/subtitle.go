@@ -2,8 +2,7 @@ package caption
 
 import (
 	"fmt"
-	"regexp"
-	"strings"
+	"oneliner-generator/util"
 	"time"
 )
 
@@ -21,17 +20,8 @@ type Subtitles []Subtitle
 
 func (s Subtitle) generateFilename() Subtitle {
 	text := s.Line1 + " " + s.Line2
-	re := regexp.MustCompile(`[^\w\-. ]+`)
-	safeName := re.ReplaceAllString(text, "")
 
-	safeName = strings.Trim(safeName, " .")
-
-	maxLength := 255
-	if len(safeName) > maxLength {
-		safeName = safeName[:maxLength]
-	}
-
-	s.Filename = safeName
+	s.Filename = util.SanitizeFileName(text)
 
 	return s
 }
