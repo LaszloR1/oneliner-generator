@@ -18,14 +18,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fs := util.NewFileSystem(config)
+	fs.SetupFolders()
+
 	if len(os.Args) < 2 {
 		log.Fatal("first argument not provided: it should be the name of the file without file extensions")
 	}
 
 	ep := os.Args[1]
-
-	fs := util.NewFileSystem(config)
-	fs.SetupFolders()
 
 	srt := caption.NewSrt(config, fs, ep)
 	subtitles := srt.Parse()
