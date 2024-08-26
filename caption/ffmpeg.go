@@ -6,7 +6,6 @@ import (
 	"oneliner-generator/types"
 	"oneliner-generator/util"
 	"os/exec"
-	"strings"
 )
 
 type FFmpeg struct {
@@ -60,11 +59,15 @@ func (f FFmpeg) trim(name string, s types.Subtitle) {
 func (f FFmpeg) addSubtitles(s types.Subtitle) {
 	args := []string{
 		"-i", fmt.Sprintf("./%s/%d.mkv", f.config.TempFolder, s.Id),
-		"-vf", fmt.Sprintf("subtitles=./%s/%d.srt:force_style='Fontsize=24',scale=480:-1:flags=bicubic,fps=24", f.config.TempFolder, s.Id),
+		"-vf", fmt.Sprintf(
+			"subtitles=./%s/%d.srt:force_style='Fontsize=%d',scale=%d:-1:flags=bicubic,fps=%d",
+			f.config.TempFolder,
+			s.Id, f.config.SubtitleFontsize,
+			f.config.GifResolution,
+			f.config.GifFramerate,
+		),
 		fmt.Sprintf("./%s/%d. %s.gif", f.config.OutputFolder, s.Id, s.Filename),
 	}
-
-	fmt.Println(strings.Join(args, " "))
 
 	cmd := exec.Command("ffmpeg", args...)
 	if out, err := cmd.CombinedOutput(); err != nil {
