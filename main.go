@@ -1,35 +1,35 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	_ "github.com/joho/godotenv/autoload"
+	"github.com/sethvargo/go-envconfig"
+	"log"
 	"oneliner-generator/caption"
-	"oneliner-generator/ffmpeg"
+	"oneliner-generator/types"
 	"oneliner-generator/util"
 	"os"
 )
 
 func main() {
-	path := "_/The_Wire/"
-	ep := "S01E01"
-
-	if len(os.Args) > 1 {
-		ep = os.Args[1]
-	}
-
-	srt_file := path + ep + ".srt"
-	mkv_file := path + ep + ".mkv"
-
-	f, err := os.Open(srt_file)
+	var config types.Config
+	err := envconfig.Process(context.Background(), &config)
 	if err != nil {
-		panic(err.Error())
+		log.Fatal(err)
 	}
 
-	util.ClearTmp()
-	subtitles := caption.ParseSrt(f)
-	for i, s := range subtitles {
-		fmt.Printf("%d/%d - %+v\n", i+1, len(subtitles), s)
-		caption.TempSrt(s)
-		ffmpeg.Trim(mkv_file, s)
-		ffmpeg.AddSubtitles(s)
+	if len(os.Args) < 2 {
+		log.Fatal("first argument not provided: it should be the name of the file without file extensions")
 	}
+
+	ep := os.Args[1]
+
+	fs := util.NewFileSystem(config)
+	fs.SetupFolders()
+
+	srt := caption.NewSrt(config, fs, ep)
+	subtitles := srt.Parse()
+
+	ffmpeg := caption.NewFFmpeg(config, subtitles, fs, ep)
+	ffmpeg.Run()
 }
