@@ -21,9 +21,9 @@ func NewFileSystem(config types.Config) FileSystem {
 func (f FileSystem) SetupFolders() {
 	f.ClearTmp()
 
-	os.MkdirAll(f.config.InputFolder, fs.ModeDir)
-	os.MkdirAll(f.config.OutputFolder, fs.ModeDir)
-	os.MkdirAll(f.config.TempFolder, fs.ModeDir)
+	os.MkdirAll(fmt.Sprintf("./%s", f.config.InputFolder), fs.ModeDir)
+	os.MkdirAll(fmt.Sprintf("./%s", f.config.OutputFolder), fs.ModeDir)
+	os.MkdirAll(fmt.Sprintf("./%s", f.config.TempFolder), fs.ModeDir)
 }
 
 func (f FileSystem) CreateTempFile(name string, contents string) {
@@ -33,7 +33,11 @@ func (f FileSystem) CreateTempFile(name string, contents string) {
 }
 
 func (f FileSystem) ClearTmp() {
-	os.RemoveAll(f.config.TempFolder)
+	os.RemoveAll(fmt.Sprintf("./%s", f.config.TempFolder))
+}
+
+func (f FileSystem) CreateFolderForEpisode(name string) {
+	os.MkdirAll(fmt.Sprintf("./%s/%s", f.config.OutputFolder, name), fs.ModeDir)
 }
 
 func (f FileSystem) DirtyBomFix(text string) string {

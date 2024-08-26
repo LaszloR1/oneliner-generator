@@ -27,6 +27,8 @@ func main() {
 
 	ep := os.Args[1]
 
+	fs.CreateFolderForEpisode(ep)
+
 	srt := caption.NewSrt(config, fs, ep)
 	subtitles := srt.Parse()
 
