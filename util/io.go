@@ -23,7 +23,7 @@ func DirtyBomFix(text string) string {
 
 func SanitizeFileName(text string) string {
 	re1 := regexp.MustCompile("<[^>]*>")
-	re2 := regexp.MustCompile(`[^\w\-. ()]+`) // Include `()` to keep parentheses
+	re2 := regexp.MustCompile(`[\\/:*?"<>|]`) // Include `()` to keep parentheses
 
 	safeName := re1.ReplaceAllString(text, "")
 	safeName = re2.ReplaceAllString(safeName, "")
