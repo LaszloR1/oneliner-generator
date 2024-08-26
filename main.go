@@ -27,8 +27,7 @@ func main() {
 	util.ClearTmp()
 	subtitles := caption.ParseSrt(f)
 	for i, s := range subtitles {
-		fmt.Printf("%d/%d - %+v", i+1, len(subtitles), s)
-		fmt.Printf("%+v\n", s)
+		fmt.Printf("%d/%d - %+v\n", i+1, len(subtitles), s)
 		caption.TempSrt(s)
 		ffmpeg.Trim(mkv_file, s)
 		ffmpeg.AddSubtitles(s)
