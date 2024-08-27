@@ -33,7 +33,7 @@ func main() {
 	subtitles := srt.Parse()
 	srt.CreateTempSrts(subtitles)
 	fs.SaveSubtitlesAsJson(ep, subtitles)
-	return
+
 	ffmpeg := caption.NewFFmpeg(config, subtitles, fs, ep)
 	ffmpeg.Run()
 }
