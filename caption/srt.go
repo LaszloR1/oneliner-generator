@@ -39,6 +39,15 @@ func (s Srt) Parse() types.Subtitles {
 	return subtitles
 }
 
+func (s Srt) CreateTempSrts(subtitles types.Subtitles) {
+	for _, subtitle := range subtitles {
+		name := fmt.Sprintf("%d.srt", subtitle.Id)
+		contents := fmt.Sprintf("1\n00:00:00,000 --> 00:01:00,000\n%s\n%s\n", subtitle.Line1, subtitle.Line2)
+
+		s.filesystem.CreateTempFile(name, contents)
+	}
+}
+
 func (s Srt) parseLines(f *os.File) types.Subtitles {
 	var subtitles types.Subtitles
 

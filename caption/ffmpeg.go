@@ -28,17 +28,9 @@ func (f FFmpeg) Run() {
 	for i, s := range f.subtitles {
 		fmt.Printf("%d/%d - %+v\n", i+1, len(f.subtitles), s)
 
-		f.createTempSrt(s)
 		f.trim(f.name, s)
 		f.addSubtitles(s)
 	}
-}
-
-func (f FFmpeg) createTempSrt(subtitle types.Subtitle) {
-	name := fmt.Sprintf("%d.srt", subtitle.Id)
-	contents := fmt.Sprintf("1\n00:00:00,000 --> 00:01:00,000\n%s\n%s\n", subtitle.Line1, subtitle.Line2)
-
-	f.filesystem.CreateTempFile(name, contents)
 }
 
 func (f FFmpeg) trim(name string, s types.Subtitle) {

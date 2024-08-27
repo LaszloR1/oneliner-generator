@@ -31,6 +31,7 @@ func main() {
 
 	srt := caption.NewSrt(config, fs, ep)
 	subtitles := srt.Parse()
+	srt.CreateTempSrts(subtitles)
 
 	ffmpeg := caption.NewFFmpeg(config, subtitles, fs, ep)
 	ffmpeg.Run()
