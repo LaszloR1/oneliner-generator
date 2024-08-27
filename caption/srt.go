@@ -67,7 +67,7 @@ func (s Srt) parseLines(f *os.File) types.Subtitles {
 			Line1:    l1,
 			Line2:    l2,
 			Duration: s.generateDuration(start, end),
-			Filename: s.filesystem.SanitizeFileName(l1 + " " + l2),
+			Filename: s.generateFileName(id, l1, l2),
 		})
 	}
 
@@ -96,4 +96,16 @@ func (s Srt) generateDuration(from string, to string) string {
 	duration := t2.Sub(t1)
 
 	return fmt.Sprintf("%.3f", duration.Seconds())
+}
+
+func (s Srt) generateFileName(id int, l1 string, l2 string) string {
+	text := l1
+
+	if l2 != "" {
+		text = text + " " + l2
+	}
+
+	text = fmt.Sprintf("%d. %s.gif", id, s.filesystem.SanitizeFileName(text))
+
+	return text
 }

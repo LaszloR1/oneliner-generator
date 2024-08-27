@@ -2,8 +2,10 @@ package util
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
 	"io/fs"
+	"log"
 	"oneliner-generator/types"
 	"os"
 	"regexp"
@@ -64,4 +66,14 @@ func (f FileSystem) GetNextLine(scanner *bufio.Scanner) string {
 	scanner.Scan()
 
 	return scanner.Text()
+}
+
+func (f FileSystem) SaveSubtitlesAsJson(ep string, subtitles types.Subtitles) {
+	jsonData, err := json.MarshalIndent(subtitles, "", "    ")
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	file := fmt.Sprintf("./%s/%s/subtitles.json", f.config.OutputFolder, ep)
+	os.WriteFile(file, jsonData, os.ModeAppend)
 }

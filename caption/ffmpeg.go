@@ -58,7 +58,7 @@ func (f FFmpeg) addSubtitles(s types.Subtitle) {
 			f.config.GifResolution,
 			f.config.GifFramerate,
 		),
-		fmt.Sprintf("./%s/%s/%d. %s.gif", f.config.OutputFolder, f.name, s.Id, s.Filename),
+		fmt.Sprintf("./%s/%s/%s", f.config.OutputFolder, f.name, s.Filename),
 	}
 
 	cmd := exec.Command("ffmpeg", args...)
