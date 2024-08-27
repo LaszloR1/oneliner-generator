@@ -76,4 +76,6 @@ func (f FileSystem) SaveSubtitlesAsJson(ep string, subtitles types.Subtitles) {
 
 	file := fmt.Sprintf("./%s/%s/subtitles.json", f.config.OutputFolder, ep)
 	os.WriteFile(file, jsonData, os.ModeAppend)
+
+	fmt.Printf("Subtitles saved to: %s", file)
 }
