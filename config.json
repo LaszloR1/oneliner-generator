@@ -5,5 +5,5 @@
 	"subtitle_fontsize": 24,
 	"gif_resolution": 480,
 	"gif_framerate": 24,
-	"length_check": true,
+	"length_check": true
 }
