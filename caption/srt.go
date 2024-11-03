@@ -60,15 +60,23 @@ func (s Srt) parseLines(f *os.File) types.Subtitles {
 
 		start, end := s.parseTimeSpan(scanner)
 		l1, l2 := s.parseSubtitles(scanner)
-		subtitles = append(subtitles, types.Subtitle{
+		duration := s.generateDuration(start, end)
+		subtitle := types.Subtitle{
 			Id:       id,
 			From:     start,
 			To:       end,
 			Line1:    l1,
 			Line2:    l2,
-			Duration: s.generateDuration(start, end),
+			Duration: fmt.Sprintf("%.3f", duration),
 			Filename: s.generateFileName(id, l1, l2),
-		})
+		}
+
+		if duration < 1.0/float64(s.config.GifFramerate) {
+			fmt.Printf("Error: The duration of the following subtitle is less than a frame: %.3fs. Cannot proceed!\n", duration)
+			log.Fatal(fmt.Sprintf("%+v\n", subtitle))
+		}
+
+		subtitles = append(subtitles, subtitle)
 	}
 
 	return subtitles
@@ -87,7 +95,7 @@ func (s Srt) parseSubtitles(scanner *bufio.Scanner) (string, string) {
 	return l1, l2
 }
 
-func (s Srt) generateDuration(from string, to string) string {
+func (s Srt) generateDuration(from string, to string) float64 {
 	const layout = "15:04:05.000"
 
 	t1, _ := time.Parse(layout, from)
@@ -95,7 +103,7 @@ func (s Srt) generateDuration(from string, to string) string {
 
 	duration := t2.Sub(t1)
 
-	return fmt.Sprintf("%.3f", duration.Seconds())
+	return duration.Seconds()
 }
 
 func (s Srt) generateFileName(id int, l1 string, l2 string) string {

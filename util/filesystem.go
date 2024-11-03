@@ -23,6 +23,7 @@ func LoadConfig() types.Config {
 
 	err = json.Unmarshal(file, &config)
 	if err != nil {
+		fmt.Println(string(file))
 		fmt.Println("Error: Couldn't parse the config file!")
 		log.Fatal(err.Error())
 	}
