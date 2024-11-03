@@ -1,10 +1,11 @@
 package types
 
 type Config struct {
-	InputFolder      string `env:"INPUT_FOLDER, required"`
-	OutputFolder     string `env:"OUTPUT_FOLDER, required"`
-	TempFolder       string `env:"TEMP_FOLDER, required"`
-	SubtitleFontsize int    `env:"SUBTITLE_FONTSIZE, required"`
-	GifResolution    int    `env:"GIF_RESOLUTION, required"`
-	GifFramerate     int    `env:"GIF_FRAMERATE, required"`
+	InputFolder      string `json:"input_folder"`
+	OutputFolder     string `json:"output_folder"`
+	TempFolder       string `json:"temp_folder"`
+	SubtitleFontsize int    `json:"subtitle_fontsize"`
+	GifResolution    int    `json:"gif_resolution"`
+	GifFramerate     int    `json:"gif_framerate"`
+	LengthCheck      bool   `json:"length_check"`
 }

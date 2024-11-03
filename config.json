@@ -1,0 +1,9 @@
+{
+	"input_folder": "_/in",
+	"output_folder": "_/out",
+	"temp_folder": "_/temp",
+	"subtitle_fontsize": 24,
+	"gif_resolution": 480,
+	"gif_framerate": 24,
+	"length_check": true,
+}

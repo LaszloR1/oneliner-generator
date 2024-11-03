@@ -12,6 +12,24 @@ import (
 	"strings"
 )
 
+func LoadConfig() types.Config {
+	var config types.Config
+
+	file, err := os.ReadFile("./config.json")
+	if err != nil {
+		fmt.Println("Error: Couldn't load contents of the config file!")
+		log.Fatal(err.Error())
+	}
+
+	err = json.Unmarshal(file, &config)
+	if err != nil {
+		fmt.Println("Error: Couldn't parse the config file!")
+		log.Fatal(err.Error())
+	}
+
+	return config
+}
+
 type FileSystem struct {
 	config types.Config
 }
