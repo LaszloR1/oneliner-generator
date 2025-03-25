@@ -1,38 +1,28 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"oneliner-generator/caption"
+	"oneliner-generator/config"
 	"oneliner-generator/util"
 )
 
 func main() {
-	config := util.LoadConfig()
+	config, err := config.Parse()
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	fs := util.NewFileSystem(config)
 	fs.SetupFolders()
 
-	ep := flag.String("ep", "", "filename of the episode you want to parse")
-	lc := flag.Bool("lc", true, "halts the program if the subtitle is visible for less than a frame (ffmpeg cannot deal with such clips)")
+	fs.CreateFolderForEpisode(config.Parameter.Episode)
 
-	flag.Parse()
-
-	if *ep == "" {
-		log.Fatal("You need to specify an episode with the -ep flag!")
-	}
-
-	if *lc == false {
-		config.LengthCheck = false
-	}
-
-	fs.CreateFolderForEpisode(*ep)
-
-	srt := caption.NewSrt(config, fs, *ep)
+	srt := caption.NewSrt(config, fs)
 	subtitles := srt.Parse()
 	srt.CreateTempSrts(subtitles)
-	fs.SaveSubtitlesAsJson(*ep, subtitles)
+	fs.SaveSubtitlesAsJson(config.Parameter.Episode, subtitles)
 
-	ffmpeg := caption.NewFFmpeg(config, subtitles, fs, *ep)
+	ffmpeg := caption.NewFFmpeg(config, subtitles, fs, config.Parameter.Episode)
 	ffmpeg.Run()
 }

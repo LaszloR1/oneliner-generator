@@ -3,19 +3,20 @@ package caption
 import (
 	"fmt"
 	"log"
+	"oneliner-generator/config"
 	"oneliner-generator/types"
 	"oneliner-generator/util"
 	"os/exec"
 )
 
 type FFmpeg struct {
-	config     types.Config
+	config     config.Config
 	filesystem util.FileSystem
 	subtitles  types.Subtitles
 	name       string
 }
 
-func NewFFmpeg(config types.Config, subtitles types.Subtitles, filesystem util.FileSystem, name string) FFmpeg {
+func NewFFmpeg(config config.Config, subtitles types.Subtitles, filesystem util.FileSystem, name string) FFmpeg {
 	return FFmpeg{
 		config:     config,
 		subtitles:  subtitles,
@@ -36,9 +37,9 @@ func (f FFmpeg) Run() {
 func (f FFmpeg) trim(name string, s types.Subtitle) {
 	args := []string{
 		"-ss", s.From,
-		"-i", fmt.Sprintf("./%s/%s.mkv", f.config.InputFolder, name),
+		"-i", fmt.Sprintf("./%s/%s.mkv", f.config.Folder.Input, name),
 		"-t", s.Duration,
-		fmt.Sprintf("./%s/%d.mkv", f.config.TempFolder, s.Id),
+		fmt.Sprintf("./%s/%d.mkv", f.config.Folder.Temporary, s.Id),
 	}
 
 	cmd := exec.Command("ffmpeg", args...)
@@ -50,15 +51,16 @@ func (f FFmpeg) trim(name string, s types.Subtitle) {
 
 func (f FFmpeg) addSubtitles(s types.Subtitle) {
 	args := []string{
-		"-i", fmt.Sprintf("./%s/%d.mkv", f.config.TempFolder, s.Id),
+		"-i", fmt.Sprintf("./%s/%d.mkv", f.config.Folder.Temporary, s.Id),
 		"-vf", fmt.Sprintf(
 			"subtitles=./%s/%d.srt:force_style='Fontsize=%d',scale=%d:-1:flags=bicubic,fps=%d",
-			f.config.TempFolder,
-			s.Id, f.config.SubtitleFontsize,
-			f.config.GifResolution,
-			f.config.GifFramerate,
+			f.config.Folder.Temporary,
+			s.Id,
+			f.config.Gif.Subtitle.Size,
+			f.config.Gif.Resolution,
+			f.config.Gif.Fps,
 		),
-		fmt.Sprintf("./%s/%s/%s", f.config.OutputFolder, f.name, s.Filename),
+		fmt.Sprintf("./%s/%s/%s", f.config.Folder.Output, f.name, s.Filename),
 	}
 
 	cmd := exec.Command("ffmpeg", args...)

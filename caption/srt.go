@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"oneliner-generator/config"
 	"oneliner-generator/types"
 	"oneliner-generator/util"
 	"os"
@@ -13,21 +14,19 @@ import (
 )
 
 type Srt struct {
-	config     types.Config
+	config     config.Config
 	filesystem util.FileSystem
-	name       string
 }
 
-func NewSrt(config types.Config, filesystem util.FileSystem, name string) Srt {
+func NewSrt(config config.Config, filesystem util.FileSystem) Srt {
 	return Srt{
 		config:     config,
 		filesystem: filesystem,
-		name:       name,
 	}
 }
 
 func (s Srt) Parse() types.Subtitles {
-	f, err := os.Open(fmt.Sprintf("%s/%s.srt", s.config.InputFolder, s.name))
+	f, err := os.Open(fmt.Sprintf("%s/%s.srt", s.config.Folder.Input, s.config.Parameter.Episode))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -71,7 +70,7 @@ func (s Srt) parseLines(f *os.File) types.Subtitles {
 			Filename: s.generateFileName(id, l1, l2),
 		}
 
-		if duration < 1.0/float64(s.config.GifFramerate) {
+		if duration < 1.0/float64(s.config.Gif.Fps) {
 			fmt.Printf("Error: The duration of the following subtitle is less than a frame: %.3fs. Cannot proceed!\n", duration)
 			log.Fatal(fmt.Sprintf("%+v\n", subtitle))
 		}

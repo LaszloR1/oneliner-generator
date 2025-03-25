@@ -6,59 +6,41 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
+	"oneliner-generator/config"
 	"oneliner-generator/types"
 	"os"
 	"regexp"
 	"strings"
 )
 
-func LoadConfig() types.Config {
-	var config types.Config
-
-	file, err := os.ReadFile("./config.json")
-	if err != nil {
-		fmt.Println("Error: Couldn't load contents of the config file!")
-		log.Fatal(err.Error())
-	}
-
-	err = json.Unmarshal(file, &config)
-	if err != nil {
-		fmt.Println(string(file))
-		fmt.Println("Error: Couldn't parse the config file!")
-		log.Fatal(err.Error())
-	}
-
-	return config
-}
-
 type FileSystem struct {
-	config types.Config
+	config config.Config
 }
 
-func NewFileSystem(config types.Config) FileSystem {
+func NewFileSystem(config config.Config) FileSystem {
 	return FileSystem{config: config}
 }
 
 func (f FileSystem) SetupFolders() {
 	f.ClearTmp()
 
-	os.MkdirAll(fmt.Sprintf("./%s", f.config.InputFolder), fs.ModeDir)
-	os.MkdirAll(fmt.Sprintf("./%s", f.config.OutputFolder), fs.ModeDir)
-	os.MkdirAll(fmt.Sprintf("./%s", f.config.TempFolder), fs.ModeDir)
+	os.MkdirAll(fmt.Sprintf("./%s", f.config.Folder.Input), fs.ModeDir)
+	os.MkdirAll(fmt.Sprintf("./%s", f.config.Folder.Output), fs.ModeDir)
+	os.MkdirAll(fmt.Sprintf("./%s", f.config.Folder.Temporary), fs.ModeDir)
 }
 
 func (f FileSystem) CreateTempFile(name string, contents string) {
-	file := fmt.Sprintf("./%s/%s", f.config.TempFolder, name)
+	file := fmt.Sprintf("./%s/%s", f.config.Folder.Temporary, name)
 
 	os.WriteFile(file, []byte(contents), os.ModeAppend)
 }
 
 func (f FileSystem) ClearTmp() {
-	os.RemoveAll(fmt.Sprintf("./%s", f.config.TempFolder))
+	os.RemoveAll(fmt.Sprintf("./%s", f.config.Folder.Temporary))
 }
 
 func (f FileSystem) CreateFolderForEpisode(name string) {
-	os.MkdirAll(fmt.Sprintf("./%s/%s", f.config.OutputFolder, name), fs.ModeDir)
+	os.MkdirAll(fmt.Sprintf("./%s/%s", f.config.Folder.Output, name), fs.ModeDir)
 }
 
 func (f FileSystem) DirtyBomFix(text string) string {
@@ -93,7 +75,7 @@ func (f FileSystem) SaveSubtitlesAsJson(ep string, subtitles types.Subtitles) {
 		log.Fatal(err.Error())
 	}
 
-	file := fmt.Sprintf("./%s/%s/subtitles.json\n", f.config.OutputFolder, ep)
+	file := fmt.Sprintf("./%s/%s/subtitles.json\n", f.config.Folder.Output, ep)
 	os.WriteFile(file, jsonData, os.ModeAppend)
 
 	fmt.Printf("Subtitles saved to: %s", file)
