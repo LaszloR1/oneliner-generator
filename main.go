@@ -4,7 +4,8 @@ import (
 	"log"
 	"oneliner-generator/caption"
 	"oneliner-generator/config"
-	"oneliner-generator/util"
+	"oneliner-generator/filesystem"
+	"oneliner-generator/subtitle"
 )
 
 func main() {
@@ -13,16 +14,21 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	fs := util.NewFileSystem(config)
-	fs.SetupFolders()
+	fs := filesystem.New(config)
+	fs.Setup()
 
-	fs.CreateFolderForEpisode(config.Parameter.Episode)
+	parser := subtitle.NewSubtitleParser(fs, config)
+	subtitles, err := parser.Parse(config.Parameter.Episode)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
-	srt := caption.NewSrt(config, fs)
-	subtitles := srt.Parse()
-	srt.CreateTempSrts(subtitles)
-	fs.SaveSubtitlesAsJson(config.Parameter.Episode, subtitles)
+	err = fs.SavesAsJson(subtitles)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	parser.CreateTempSubtitleSrts(subtitles)
 
-	ffmpeg := caption.NewFFmpeg(config, subtitles, fs, config.Parameter.Episode)
-	ffmpeg.Run()
+	ffmpeg := caption.NewFFmpeg(config, fs)
+	ffmpeg.Run(subtitles)
 }

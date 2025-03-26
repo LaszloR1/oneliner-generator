@@ -1,13 +1,12 @@
 package config
 
 type Config struct {
-	Folder      folder `json:"folder"`
-	Gif         gif    `json:"gif"`
-	LengthCheck bool   `json:"length_check"`
-	Parameter   parameter
+	Folder    Folder `json:"folder"`
+	Gif       gif    `json:"gif"`
+	Parameter Parameter
 }
 
-type folder struct {
+type Folder struct {
 	Input     string `json:"input"`
 	Output    string `json:"output"`
 	Temporary string `json:"temporary"`
@@ -25,7 +24,7 @@ type subtitle struct {
 	CheckLength bool   `json:"check_length"`
 }
 
-type parameter struct {
+type Parameter struct {
 	Episode         string
 	SkipCheckLength bool
 }

@@ -33,13 +33,13 @@ func parseConfig() (Config, error) {
 	return config, nil
 }
 
-func parseParameter() parameter {
+func parseParameter() Parameter {
 	ep := flag.String("ep", "", "filename of the episode you want to parse")
 	lc := flag.Bool("lc", true, "halts the program if the subtitle is visible for less than a frame (ffmpeg cannot deal with such clips)")
 
 	flag.Parse()
 
-	return parameter{
+	return Parameter{
 		Episode:         *ep,
 		SkipCheckLength: *lc,
 	}
