@@ -3,7 +3,6 @@ package config
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"os"
 )
 
@@ -39,8 +38,6 @@ func parseParameter() parameter {
 	lc := flag.Bool("lc", true, "halts the program if the subtitle is visible for less than a frame (ffmpeg cannot deal with such clips)")
 
 	flag.Parse()
-
-	fmt.Println(*ep)
 
 	return parameter{
 		Episode:         *ep,
