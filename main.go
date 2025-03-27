@@ -1,9 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"oneliner-generator/caption"
 	"oneliner-generator/config"
+	"oneliner-generator/ffmpeg"
 	"oneliner-generator/filesystem"
 	"oneliner-generator/subtitle"
 )
@@ -25,6 +26,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	ffmpeg := caption.NewFFmpeg(config, fs)
-	ffmpeg.Run(subtitles)
+	ffmpeg := ffmpeg.New(config, fs)
+	if err := ffmpeg.Run(subtitles); err != nil {
+		log.Fatal(err.Error())
+	}
+
+	fmt.Println("All done!")
 }
