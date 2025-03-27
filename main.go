@@ -15,19 +15,15 @@ func main() {
 	}
 
 	fs := filesystem.New(config)
-	fs.Setup()
+	if err := fs.Setup(); err != nil {
+		log.Fatal(err.Error())
+	}
 
 	parser := subtitle.NewSubtitleParser(fs, config)
 	subtitles, err := parser.Parse(config.Parameter.Episode)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
-
-	err = fs.SavesAsJson(subtitles)
-	if err != nil {
-		log.Fatal(err.Error())
-	}
-	parser.CreateTempSubtitleSrts(subtitles)
 
 	ffmpeg := caption.NewFFmpeg(config, fs)
 	ffmpeg.Run(subtitles)

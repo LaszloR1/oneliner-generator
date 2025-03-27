@@ -28,15 +28,6 @@ func (s Subtitle) getFullLine() string {
 	return strings.Join(s.Lines, " ")
 }
 
-func (stp SubtitleParser) CreateTempSubtitleSrts(subtitles []Subtitle) {
-	for _, subtitle := range subtitles {
-		name := fmt.Sprintf("%d.srt", subtitle.Id)
-		contents := append([]string{"1", "00:00:00,000 --> 00:01:00,000"}, subtitle.Lines...)
-
-		stp.fs.CreateTemp(name, strings.Join(contents, "\n"))
-	}
-}
-
 func (stp SubtitleParser) Parse(filename string) ([]Subtitle, error) {
 	var subtitles []Subtitle
 
@@ -77,6 +68,13 @@ func (stp SubtitleParser) Parse(filename string) ([]Subtitle, error) {
 			subtitle = Subtitle{}
 		}
 	}
+
+	err = stp.fs.SavesAsJson(subtitles)
+	if err != nil {
+		return subtitles, err
+	}
+
+	stp.createTempSubtitleSrts(subtitles)
 
 	return subtitles, nil
 }
@@ -145,4 +143,19 @@ func (s Subtitle) getFileName() string {
 	}
 
 	return fmt.Sprintf("%d. %s", s.Id, filesystem.SanitizeFileName(text))
+}
+
+func (stp SubtitleParser) createTempSubtitleSrts(subtitles []Subtitle) error {
+	contents := []string{"1", "00:00:00,000 --> 00:01:00,000"}
+
+	for _, subtitle := range subtitles {
+		name := fmt.Sprintf("%d.srt", subtitle.Id)
+
+		err := stp.fs.CreateTemp(name, strings.Join(append(contents, subtitle.Lines...), "\n"))
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

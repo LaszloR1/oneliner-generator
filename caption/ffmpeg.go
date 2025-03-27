@@ -27,10 +27,6 @@ func (f FFmpeg) Run(subtitles []subtitle.Subtitle) {
 
 		f.trim(subtitle)
 		f.addSubtitles(subtitle)
-
-		if subtitle.Id == 10 {
-			return
-		}
 	}
 }
 

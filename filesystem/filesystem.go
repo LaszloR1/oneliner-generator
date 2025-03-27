@@ -10,19 +10,24 @@ import (
 
 const dirMode = 0755
 
-func (f Filesystem) Setup() {
-	os.RemoveAll(fmt.Sprintf("./%s", f.folder.Temporary))
-	os.RemoveAll(fmt.Sprintf("./%s", f.folder.Output))
-
-	for _, folder := range []string{f.folder.Input, f.folder.Output, f.folder.Temporary} {
-		os.MkdirAll(fmt.Sprintf("./%s", folder), dirMode)
+func (f Filesystem) Setup() error {
+	for _, folder := range []string{f.folder.Temporary, f.folder.Output} {
+		if err := os.RemoveAll(fmt.Sprintf("./%s", folder)); err != nil {
+			return err
+		}
 	}
 
-	os.MkdirAll(fmt.Sprintf("./%s/%s", f.folder.Output, f.parameter.Episode), dirMode)
-}
+	for _, folder := range []string{f.folder.Input, f.folder.Output, f.folder.Temporary} {
+		if err := os.MkdirAll(fmt.Sprintf("./%s", folder), dirMode); err != nil {
+			return err
+		}
+	}
 
-func (f Filesystem) cleanDir(folder string) {
-	os.RemoveAll(fmt.Sprintf("./%s", folder))
+	if err := os.MkdirAll(fmt.Sprintf("./%s/%s", f.folder.Output, f.parameter.Episode), dirMode); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func DirtyBomFix(text string) string {
@@ -60,6 +65,6 @@ func (f Filesystem) SavesAsJson(subtitles any) error {
 	return nil
 }
 
-func (f Filesystem) CreateTemp(filename string, content string) {
-	os.WriteFile(fmt.Sprintf("./%s/%s", f.folder.Temporary, filename), []byte(content), os.ModeAppend)
+func (f Filesystem) CreateTemp(filename string, content string) error {
+	return os.WriteFile(fmt.Sprintf("./%s/%s", f.folder.Temporary, filename), []byte(content), os.ModeAppend)
 }
