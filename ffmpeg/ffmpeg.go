@@ -2,23 +2,9 @@ package ffmpeg
 
 import (
 	"fmt"
-	"oneliner-generator/config"
-	"oneliner-generator/filesystem"
 	"oneliner-generator/subtitle"
 	"os/exec"
 )
-
-type FFmpeg struct {
-	config config.Config
-	fs     filesystem.Filesystem
-}
-
-func New(config config.Config, fs filesystem.Filesystem) FFmpeg {
-	return FFmpeg{
-		config: config,
-		fs:     fs,
-	}
-}
 
 func (f FFmpeg) Run(subtitles []subtitle.Subtitle) error {
 	for i, subtitle := range subtitles {
