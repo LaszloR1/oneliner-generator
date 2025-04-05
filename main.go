@@ -20,14 +20,18 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	parser := subtitle.NewSubtitleParser(fs, config)
+	parser, err := subtitle.CreateParser(config, fs)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
 	subtitles, err := parser.Parse(config.Parameter.Episode)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
-	ffmpeg := ffmpeg.New(config, fs)
-	if err := ffmpeg.Run(subtitles); err != nil {
+	generator := subtitle.NewGenerator(ffmpeg.New(config, fs))
+	if err := generator.Run(subtitles); err != nil {
 		log.Fatal(err.Error())
 	}
 

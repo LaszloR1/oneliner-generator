@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"oneliner-generator/config"
 	"oneliner-generator/filesystem"
 	"os"
 	"strconv"
@@ -28,10 +29,22 @@ func (s Subtitle) getFullLine() string {
 	return strings.Join(s.Lines, " ")
 }
 
-func (stp SubtitleParser) Parse(filename string) ([]Subtitle, error) {
+type srtParser struct {
+	config config.Config
+	fs     filesystem.Filesystem
+}
+
+func NewSrtParser(config config.Config, fs filesystem.Filesystem) srtParser {
+	return srtParser{
+		config: config,
+		fs:     fs,
+	}
+}
+
+func (srt srtParser) Parse(filename string) ([]Subtitle, error) {
 	var subtitles []Subtitle
 
-	file, err := os.Open(fmt.Sprintf("./%s/%s.srt", stp.config.Folder.Input, filename))
+	file, err := os.Open(fmt.Sprintf("./%s/%s.srt", srt.config.Folder.Input, filename))
 	if err != nil {
 		return subtitles, err
 	}
@@ -55,7 +68,7 @@ func (stp SubtitleParser) Parse(filename string) ([]Subtitle, error) {
 			if err != nil {
 				return subtitles, err
 			}
-			if stp.lessThanAFrame(duration.Length) {
+			if srt.lessThanAFrame(duration.Length) {
 				return subtitles, errors.New(fmt.Sprintf("Subtitle %d is less than a frame!", subtitle.Id))
 			}
 
@@ -69,12 +82,12 @@ func (stp SubtitleParser) Parse(filename string) ([]Subtitle, error) {
 		}
 	}
 
-	err = stp.fs.SavesAsJson(subtitles)
+	err = srt.fs.SavesAsJson(subtitles)
 	if err != nil {
 		return subtitles, err
 	}
 
-	stp.createTempSubtitleSrts(subtitles)
+	srt.createTempSubtitleSrts(subtitles)
 
 	return subtitles, nil
 }
@@ -118,16 +131,16 @@ func parseDuration(line string) (duration, error) {
 	return duration, nil
 }
 
-func (stp SubtitleParser) lessThanAFrame(length time.Duration) bool {
-	if stp.config.Parameter.SkipCheckLength {
+func (srt srtParser) lessThanAFrame(length time.Duration) bool {
+	if srt.config.Parameter.SkipCheckLength {
 		return false
 	}
 
-	if !stp.config.Gif.Subtitle.CheckLength {
+	if !srt.config.Gif.Subtitle.CheckLength {
 		return false
 	}
 
-	if float64(1000)/float64(stp.config.Gif.Fps) < float64(length.Seconds()) {
+	if float64(1000)/float64(srt.config.Gif.Fps) < float64(length.Seconds()) {
 		return false
 	}
 
@@ -145,13 +158,13 @@ func (s Subtitle) getFileName() string {
 	return fmt.Sprintf("%d. %s", s.Id, filesystem.SanitizeFileName(text))
 }
 
-func (stp SubtitleParser) createTempSubtitleSrts(subtitles []Subtitle) error {
+func (srt srtParser) createTempSubtitleSrts(subtitles []Subtitle) error {
 	contents := []string{"1", "00:00:00,000 --> 00:01:00,000"}
 
 	for _, subtitle := range subtitles {
 		name := fmt.Sprintf("%d.srt", subtitle.Id)
 
-		err := stp.fs.CreateTemp(name, strings.Join(append(contents, subtitle.Lines...), "\n"))
+		err := srt.fs.CreateTemp(name, strings.Join(append(contents, subtitle.Lines...), "\n"))
 		if err != nil {
 			return err
 		}

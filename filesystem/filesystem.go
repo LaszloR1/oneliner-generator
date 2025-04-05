@@ -60,7 +60,7 @@ func (f Filesystem) SavesAsJson(subtitles any) error {
 		return err
 	}
 
-	fmt.Println("Subtitles saved")
+	fmt.Println("Extracted subtitle list json")
 
 	return nil
 }
