@@ -11,6 +11,10 @@ import (
 
 func CreateParser(config config.Config, fs filesystem.Filesystem) (Parser, error) {
 	if _, err := os.Stat(fmt.Sprintf("%s/%s.srt", config.Folder.Input, config.Parameter.Episode)); err == nil {
+		return NewAssParser(config, fs), nil
+	}
+
+	if _, err := os.Stat(fmt.Sprintf("%s/%s.srt", config.Folder.Input, config.Parameter.Episode)); err == nil {
 		return NewSrtParser(config, fs), nil
 	}
 

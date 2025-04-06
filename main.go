@@ -30,7 +30,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	generator := subtitle.NewGenerator(ffmpeg.New(config, fs))
+	generator := subtitle.NewGenerator(config, fs, ffmpeg.New(config, fs))
 	if err := generator.Run(subtitles); err != nil {
 		log.Fatal(err.Error())
 	}
