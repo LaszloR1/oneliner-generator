@@ -41,10 +41,10 @@ func NewSrtParser(config config.Config, fs filesystem.Filesystem) srtParser {
 	}
 }
 
-func (srt srtParser) Parse(filename string) ([]Subtitle, error) {
+func (sp srtParser) Parse(filename string) ([]Subtitle, error) {
 	var subtitles []Subtitle
 
-	file, err := os.Open(fmt.Sprintf("./%s/%s.srt", srt.config.Folder.Input, filename))
+	file, err := os.Open(fmt.Sprintf("./%s/%s.srt", sp.config.Folder.Input, filename))
 	if err != nil {
 		return subtitles, err
 	}
@@ -68,7 +68,7 @@ func (srt srtParser) Parse(filename string) ([]Subtitle, error) {
 			if err != nil {
 				return subtitles, err
 			}
-			if srt.lessThanAFrame(duration.Length) {
+			if sp.lessThanAFrame(duration.Length) {
 				return subtitles, errors.New(fmt.Sprintf("Subtitle %d is less than a frame!", subtitle.Id))
 			}
 
@@ -82,12 +82,12 @@ func (srt srtParser) Parse(filename string) ([]Subtitle, error) {
 		}
 	}
 
-	err = srt.fs.SavesAsJson(subtitles)
+	err = sp.fs.SavesAsJson(subtitles)
 	if err != nil {
 		return subtitles, err
 	}
 
-	srt.createTempSubtitleSrts(subtitles)
+	sp.createTempSubtitleSrts(subtitles)
 
 	return subtitles, nil
 }
@@ -158,13 +158,13 @@ func (s Subtitle) getFileName() string {
 	return fmt.Sprintf("%d. %s", s.Id, filesystem.SanitizeFileName(text))
 }
 
-func (srt srtParser) createTempSubtitleSrts(subtitles []Subtitle) error {
+func (sp srtParser) createTempSubtitleSrts(subtitles []Subtitle) error {
 	contents := []string{"1", "00:00:00,000 --> 00:01:00,000"}
 
 	for _, subtitle := range subtitles {
 		name := fmt.Sprintf("%d.srt", subtitle.Id)
 
-		err := srt.fs.CreateTemp(name, strings.Join(append(contents, subtitle.Lines...), "\n"))
+		err := sp.fs.CreateTemp(name, strings.Join(append(contents, subtitle.Lines...), "\n"))
 		if err != nil {
 			return err
 		}

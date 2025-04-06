@@ -16,3 +16,7 @@ type duration struct {
 	To     time.Time
 	Length time.Duration
 }
+
+type Parser interface {
+	Parse(string) ([]Subtitle, error)
+}
