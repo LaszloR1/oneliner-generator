@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"oneliner-generator/config"
 	"oneliner-generator/filesystem"
+	"oneliner-generator/logger"
 	"os"
 	"strconv"
 	"strings"
@@ -29,16 +30,20 @@ func (s Subtitle) getFullLine() string {
 type srtParser struct {
 	config config.Config
 	fs     filesystem.Filesystem
+	logger logger.Logger
 }
 
-func NewSrtParser(config config.Config, fs filesystem.Filesystem) srtParser {
+func NewSrtParser(config config.Config, fs filesystem.Filesystem, logger logger.Logger) srtParser {
 	return srtParser{
 		config: config,
 		fs:     fs,
+		logger: logger,
 	}
 }
 
 func (sp srtParser) Parse(filename string) ([]Subtitle, error) {
+	sp.logger.Log(logger.Stage, "srt subtitle parser")
+
 	var subtitles []Subtitle
 
 	file, err := os.Open(fmt.Sprintf("./%s/%s.srt", sp.config.Folder.Input, filename))

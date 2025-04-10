@@ -3,6 +3,7 @@ package config
 type Config struct {
 	Folder    Folder `json:"folder"`
 	Gif       gif    `json:"gif"`
+	Log       log    `json:"log"`
 	Parameter Parameter
 }
 
@@ -27,4 +28,8 @@ type subtitle struct {
 type Parameter struct {
 	Episode         string
 	SkipCheckLength bool
+}
+
+type log struct {
+	Types []string
 }

@@ -1,14 +1,15 @@
 package ffmpeg
 
 import (
-	"fmt"
+	"oneliner-generator/logger"
 	"os/exec"
 )
 
 func (f FFmpeg) execute(args []string) error {
 	cmd := exec.Command("ffmpeg", args...)
 	if out, err := cmd.CombinedOutput(); err != nil {
-		fmt.Println(string(out))
+		f.logger.Log(logger.Critical, string(out))
+
 		return err
 	}
 

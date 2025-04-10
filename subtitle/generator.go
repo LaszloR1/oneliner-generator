@@ -5,19 +5,22 @@ import (
 	"oneliner-generator/config"
 	"oneliner-generator/ffmpeg"
 	"oneliner-generator/filesystem"
+	"oneliner-generator/logger"
 	"strings"
 )
 
 type Generator struct {
 	config config.Config
 	fs     filesystem.Filesystem
+	logger logger.Logger
 	ffmpeg ffmpeg.FFmpeg
 }
 
-func NewGenerator(config config.Config, fs filesystem.Filesystem, ffmpeg ffmpeg.FFmpeg) Generator {
+func NewGenerator(config config.Config, fs filesystem.Filesystem, logger logger.Logger, ffmpeg ffmpeg.FFmpeg) Generator {
 	return Generator{
 		config: config,
 		fs:     fs,
+		logger: logger,
 		ffmpeg: ffmpeg,
 	}
 }
@@ -39,8 +42,10 @@ func (g Generator) Run(subtitles []Subtitle) error {
 }
 
 func (g Generator) generate(subtitles []Subtitle) error {
+	g.logger.Log(logger.Stage, "gif generator")
+
 	for i, subtitle := range subtitles {
-		fmt.Printf("%d/%d - %+v\n", i+1, len(subtitles), subtitle)
+		g.logger.Log(logger.Render, fmt.Sprintf("%d/%d - %+v\n", i+1, len(subtitles), subtitle))
 
 		if err := g.ffmpeg.Trim(subtitle.Id, subtitle.Duration.From, subtitle.Duration.Length); err != nil {
 			return err
@@ -63,7 +68,6 @@ func (g Generator) validate(subtitles []Subtitle) error {
 
 	return nil
 }
-
 func (g Generator) createTempSubtitleSrts(subtitles []Subtitle) error {
 	contents := []string{"1", "00:00:00,000 --> 00:01:00,000"}
 

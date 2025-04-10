@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"oneliner-generator/config"
 	"oneliner-generator/filesystem"
+	"oneliner-generator/logger"
 	"os"
 	"strings"
 )
@@ -12,12 +13,14 @@ import (
 type assParser struct {
 	config config.Config
 	fs     filesystem.Filesystem
+	logger logger.Logger
 }
 
-func NewAssParser(config config.Config, fs filesystem.Filesystem) assParser {
+func NewAssParser(config config.Config, fs filesystem.Filesystem, logger logger.Logger) assParser {
 	return assParser{
 		config: config,
 		fs:     fs,
+		logger: logger,
 	}
 }
 
@@ -25,6 +28,8 @@ const assSeparator = ","
 const assTimeFormat = "15:04:05.00"
 
 func (ap assParser) Parse(filename string) ([]Subtitle, error) {
+	ap.logger.Log(logger.Stage, "ass subtitle parser")
+
 	var subtitles []Subtitle
 
 	file, err := os.Open(fmt.Sprintf("./%s/%s.ass", ap.config.Folder.Input, filename))
@@ -41,8 +46,6 @@ func (ap assParser) Parse(filename string) ([]Subtitle, error) {
 		if !strings.HasPrefix(line, "Dialogue:") {
 			continue
 		}
-
-		fmt.Println(line)
 
 		parts := strings.Split(line, assSeparator)
 		start := parts[1]

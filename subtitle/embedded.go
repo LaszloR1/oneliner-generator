@@ -1,34 +1,34 @@
 package subtitle
 
 import (
-	"fmt"
 	"oneliner-generator/config"
 	"oneliner-generator/ffmpeg"
 	"oneliner-generator/filesystem"
+	"oneliner-generator/logger"
 )
 
 type embeddedParser struct {
 	config config.Config
 	fs     filesystem.Filesystem
+	logger logger.Logger
 	ffmpeg ffmpeg.FFmpeg
 }
 
-func NewEmbeddedParser(config config.Config, fs filesystem.Filesystem, ffmpeg ffmpeg.FFmpeg) embeddedParser {
+func NewEmbeddedParser(config config.Config, fs filesystem.Filesystem, logger logger.Logger, ffmpeg ffmpeg.FFmpeg) embeddedParser {
 	return embeddedParser{
 		config: config,
 		fs:     fs,
+		logger: logger,
 		ffmpeg: ffmpeg,
 	}
 }
 
 func (ep embeddedParser) Parse(filename string) ([]Subtitle, error) {
-	fmt.Println("Extracting embedded subtitles...")
+	ep.logger.Log(logger.Stage, "embedded subtitle parser")
 
 	ep.ffmpeg.Extract()
 
-	fmt.Println("Extracted embedded subtitles")
-
-	parser := NewSrtParser(ep.config, ep.fs)
+	parser := NewSrtParser(ep.config, ep.fs, ep.logger)
 
 	return parser.Parse(filename)
 }

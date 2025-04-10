@@ -12,5 +12,11 @@
       "size": 24,
       "check_length": true
     }
+  },
+  "log": {
+    "types": [
+      "stage",
+      "render"
+    ]
   }
 }
