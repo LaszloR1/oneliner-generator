@@ -37,5 +37,5 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	logger.Log(logger_module.Stage, "Done!")
+	logger.Log(logger_module.Stage, "done")
 }
