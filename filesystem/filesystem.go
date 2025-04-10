@@ -14,10 +14,13 @@ const dirMode = 0755
 func (f Filesystem) Setup() error {
 	f.logger.Log(logger.Stage, "directory setup")
 
-	for _, folder := range []string{f.folder.Temporary, f.folder.Output} {
-		if err := os.RemoveAll(fmt.Sprintf("./%s", folder)); err != nil {
-			return err
-		}
+	if err := os.RemoveAll(fmt.Sprintf("./%s", f.folder.Temporary)); err != nil {
+		return err
+	}
+
+	err := os.RemoveAll(fmt.Sprintf("./%s/%s", f.folder.Output, f.parameter.Episode))
+	if err != nil && os.IsNotExist(err) {
+		return err
 	}
 
 	for _, folder := range []string{f.folder.Input, f.folder.Output, f.folder.Temporary} {
