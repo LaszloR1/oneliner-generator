@@ -3,6 +3,7 @@ package filesystem
 import (
 	"encoding/json"
 	"fmt"
+	"oneliner-generator/logger"
 	"os"
 	"regexp"
 	"strings"
@@ -11,10 +12,15 @@ import (
 const dirMode = 0755
 
 func (f Filesystem) Setup() error {
-	for _, folder := range []string{f.folder.Temporary, f.folder.Output} {
-		if err := os.RemoveAll(fmt.Sprintf("./%s", folder)); err != nil {
-			return err
-		}
+	f.logger.Log(logger.Stage, "directory setup")
+
+	if err := os.RemoveAll(fmt.Sprintf("./%s", f.folder.Temporary)); err != nil {
+		return err
+	}
+
+	err := os.RemoveAll(fmt.Sprintf("./%s/%s", f.folder.Output, f.parameter.Episode))
+	if err != nil && os.IsNotExist(err) {
+		return err
 	}
 
 	for _, folder := range []string{f.folder.Input, f.folder.Output, f.folder.Temporary} {
@@ -60,7 +66,7 @@ func (f Filesystem) SavesAsJson(subtitles any) error {
 		return err
 	}
 
-	fmt.Println("Extracted subtitle list json")
+	f.logger.Log(logger.Stage, "json export")
 
 	return nil
 }

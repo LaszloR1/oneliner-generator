@@ -1,11 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"oneliner-generator/config"
 	"oneliner-generator/ffmpeg"
 	"oneliner-generator/filesystem"
+	logger_module "oneliner-generator/logger"
 	"oneliner-generator/subtitle"
 )
 
@@ -15,12 +15,14 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	fs := filesystem.New(config)
+	logger := logger_module.NewLogger(config)
+
+	fs := filesystem.New(config, logger)
 	if err := fs.Setup(); err != nil {
 		log.Fatal(err.Error())
 	}
 
-	parser, err := subtitle.CreateParser(config, fs)
+	parser, err := subtitle.CreateParser(config, fs, logger)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -30,10 +32,10 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	generator := subtitle.NewGenerator(config, fs, ffmpeg.New(config, fs))
+	generator := subtitle.NewGenerator(config, fs, logger, ffmpeg.New(config, fs, logger))
 	if err := generator.Run(subtitles); err != nil {
 		log.Fatal(err.Error())
 	}
 
-	fmt.Println("All done!")
+	logger.Log(logger_module.Stage, "done")
 }
