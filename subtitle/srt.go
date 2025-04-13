@@ -41,12 +41,12 @@ func NewSrtParser(config config.Config, fs filesystem.Filesystem, logger logger.
 	}
 }
 
-func (sp srtParser) Parse(filename string) ([]Subtitle, error) {
+func (sp srtParser) Parse() ([]Subtitle, error) {
 	sp.logger.Log(logger.Stage, "srt subtitle parser")
 
 	var subtitles []Subtitle
 
-	file, err := os.Open(fmt.Sprintf("./%s/%s.srt", sp.config.Folder.Input, filename))
+	file, err := os.Open(fmt.Sprintf("./%s/%s.srt", sp.config.Folder.Input, sp.config.Parameter.Episode))
 	if err != nil {
 		return subtitles, err
 	}

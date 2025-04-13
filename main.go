@@ -27,7 +27,7 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	subtitles, err := parser.Parse(config.Parameter.Episode)
+	subtitles, err := parser.Parse()
 	if err != nil {
 		log.Fatal(err.Error())
 	}

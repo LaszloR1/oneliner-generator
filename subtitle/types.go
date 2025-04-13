@@ -18,5 +18,5 @@ type duration struct {
 }
 
 type Parser interface {
-	Parse(string) ([]Subtitle, error)
+	Parse() ([]Subtitle, error)
 }
