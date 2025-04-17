@@ -2,8 +2,10 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"os"
+	"strings"
 )
 
 func Parse() (Config, error) {
@@ -12,7 +14,10 @@ func Parse() (Config, error) {
 		return config, err
 	}
 
-	config.Parameter = parseParameter()
+	config.Parameter, err = parseParameter()
+	if err != nil {
+		return config, err
+	}
 
 	return config, nil
 }
@@ -33,14 +38,33 @@ func parseConfig() (Config, error) {
 	return config, nil
 }
 
-func parseParameter() Parameter {
-	ep := flag.String("ep", "", "filename of the episode you want to parse")
+func parseParameter() (Parameter, error) {
+	file := flag.String("file", "", "file of the episode you want to parse")
 	lc := flag.Bool("lc", true, "halts the program if the subtitle is visible for less than a frame (ffmpeg cannot deal with such clips)")
 
 	flag.Parse()
 
-	return Parameter{
-		Episode:         *ep,
-		SkipCheckLength: *lc,
+	episode, format, err := parseInput(*file)
+	if err != nil {
+		return Parameter{}, err
 	}
+
+	return Parameter{
+		Episode:         episode,
+		Format:          format,
+		SkipCheckLength: *lc,
+	}, nil
+}
+
+func parseInput(file string) (string, string, error) {
+	parts := strings.Split(file, ".")
+	if len(parts) < 2 {
+		return "", "", errors.New("Could not determine filetype from file.")
+	}
+
+	final := len(parts) - 1
+	episode := strings.Join(parts[0:final], ".")
+	format := parts[final]
+
+	return episode, format, nil
 }

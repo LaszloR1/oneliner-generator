@@ -27,7 +27,7 @@ func (f FFmpeg) getTrimSeek(from time.Time) []string {
 func (f FFmpeg) getTrimInput() []string {
 	return []string{
 		"-i",
-		fmt.Sprintf("./%s/%s.mkv", f.config.Folder.Input, f.config.Parameter.Episode),
+		fmt.Sprintf("./%s/%s.%s", f.config.Folder.Input, f.config.Parameter.Episode, f.config.Parameter.Format),
 	}
 }
 

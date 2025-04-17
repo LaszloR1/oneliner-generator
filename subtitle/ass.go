@@ -27,12 +27,12 @@ func NewAssParser(config config.Config, fs filesystem.Filesystem, logger logger.
 const assSeparator = ","
 const assTimeFormat = "15:04:05.00"
 
-func (ap assParser) Parse(filename string) ([]Subtitle, error) {
+func (ap assParser) Parse() ([]Subtitle, error) {
 	ap.logger.Log(logger.Stage, "ass subtitle parser")
 
 	var subtitles []Subtitle
 
-	file, err := os.Open(fmt.Sprintf("./%s/%s.ass", ap.config.Folder.Input, filename))
+	file, err := os.Open(fmt.Sprintf("./%s/%s.ass", ap.config.Folder.Input, ap.config.Parameter.Episode))
 	if err != nil {
 		return subtitles, err
 	}

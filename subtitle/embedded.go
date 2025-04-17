@@ -23,12 +23,12 @@ func NewEmbeddedParser(config config.Config, fs filesystem.Filesystem, logger lo
 	}
 }
 
-func (ep embeddedParser) Parse(filename string) ([]Subtitle, error) {
+func (ep embeddedParser) Parse() ([]Subtitle, error) {
 	ep.logger.Log(logger.Stage, "embedded subtitle parser")
 
 	ep.ffmpeg.Extract()
 
 	parser := NewSrtParser(ep.config, ep.fs, ep.logger)
 
-	return parser.Parse(filename)
+	return parser.Parse()
 }

@@ -19,7 +19,7 @@ func CreateParser(config config.Config, fs filesystem.Filesystem, logger logger.
 		return NewSrtParser(config, fs, logger), nil
 	}
 
-	if _, err := os.Stat(fmt.Sprintf("%s/%s.mkv", config.Folder.Input, config.Parameter.Episode)); err == nil {
+	if _, err := os.Stat(fmt.Sprintf("%s/%s.%s", config.Folder.Input, config.Parameter.Episode, config.Parameter.Format)); err == nil {
 		return NewEmbeddedParser(config, fs, logger, ffmpeg.New(config, fs, logger)), nil
 	}
 
