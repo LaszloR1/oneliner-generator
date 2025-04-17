@@ -45,7 +45,7 @@ func (g Generator) generate(subtitles []Subtitle) error {
 	g.logger.Log(logger.Stage, "gif generator")
 
 	for i, subtitle := range subtitles {
-		g.logger.Log(logger.Render, fmt.Sprintf("%d/%d - %+v\n", i+1, len(subtitles), subtitle))
+		g.logger.Log(logger.Render, fmt.Sprintf("%d/%d - %+v", i+1, len(subtitles), subtitle))
 
 		if err := g.ffmpeg.Trim(subtitle.Id, subtitle.Duration.From, subtitle.Duration.Length); err != nil {
 			return err
