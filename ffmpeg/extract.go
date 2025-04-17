@@ -8,6 +8,7 @@ import (
 func (f FFmpeg) Extract() error {
 	args := slices.Concat(
 		f.getExtractInput(),
+		f.getMap(),
 		f.getExtractOutput(),
 	)
 
@@ -18,6 +19,13 @@ func (f FFmpeg) getExtractInput() []string {
 	return []string{
 		"-i",
 		fmt.Sprintf("./%s/%s.%s", f.config.Folder.Input, f.config.Parameter.Episode, f.config.Parameter.Format),
+	}
+}
+
+func (f FFmpeg) getMap() []string {
+	return []string{
+		"-map",
+		"0:s:0",
 	}
 }
 
