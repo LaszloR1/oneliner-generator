@@ -28,6 +28,7 @@ type subtitle struct {
 type Parameter struct {
 	Episode         string
 	Format          string
+	Subtitle        int
 	SkipCheckLength bool
 }
 
