@@ -25,7 +25,7 @@ func (f FFmpeg) getExtractInput() []string {
 func (f FFmpeg) getMap() []string {
 	return []string{
 		"-map",
-		fmt.Sprintf("0:%d", f.config.Parameter.Subtitle),
+		fmt.Sprintf("0:s:%d", f.config.Parameter.Subtitle),
 	}
 }
 
