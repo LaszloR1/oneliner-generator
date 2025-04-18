@@ -40,6 +40,7 @@ func parseConfig() (Config, error) {
 
 func parseParameter() (Parameter, error) {
 	file := flag.String("file", "", "file of the episode you want to parse")
+	sub := flag.Int("sub", 0, "id of the subtitle track you want to extract")
 	lc := flag.Bool("lc", true, "halts the program if the subtitle is visible for less than a frame (ffmpeg cannot deal with such clips)")
 
 	flag.Parse()
@@ -52,6 +53,7 @@ func parseParameter() (Parameter, error) {
 	return Parameter{
 		Episode:         episode,
 		Format:          format,
+		Subtitle:        *sub,
 		SkipCheckLength: *lc,
 	}, nil
 }
