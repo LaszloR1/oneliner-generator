@@ -30,6 +30,7 @@ type Parameter struct {
 	Format          string
 	Subtitle        int
 	SkipCheckLength bool
+	SubtitleDelay   float64
 }
 
 type log struct {
