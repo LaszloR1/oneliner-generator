@@ -66,7 +66,7 @@ func (sp srtParser) Parse() ([]Subtitle, error) {
 			}
 			subtitle.Id = id
 		case Time:
-			duration, err := parseDuration(strings.Split(line, " --> "), srtTimeFormat)
+			duration, err := parseDuration(strings.Split(line, " --> "), srtTimeFormat, sp.config.Parameter.SubtitleDelay)
 			if err != nil {
 				return subtitles, err
 			}

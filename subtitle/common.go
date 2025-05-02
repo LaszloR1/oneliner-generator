@@ -8,7 +8,7 @@ import (
 
 const timeFormat = "15:04:05.000"
 
-func parseDuration(timeStrings []string, format string) (duration, error) {
+func parseDuration(timeStrings []string, format string, delay float64) (duration, error) {
 	var duration duration
 
 	var times []time.Time
@@ -20,8 +20,10 @@ func parseDuration(timeStrings []string, format string) (duration, error) {
 		times = append(times, parsed)
 	}
 
-	duration.From = times[0]
-	duration.To = times[1]
+	delayDuration := time.Duration(delay * float64(time.Second))
+
+	duration.From = times[0].Add(delayDuration)
+	duration.To = times[1].Add(delayDuration)
 	duration.Length = duration.To.Sub(duration.From)
 
 	return duration, nil

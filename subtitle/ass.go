@@ -52,7 +52,7 @@ func (ap assParser) Parse() ([]Subtitle, error) {
 		end := parts[2]
 		lines := strings.Split(strings.Join(parts[9:], assSeparator), "\\N")
 
-		duration, err := parseDuration([]string{start, end}, assTimeFormat)
+		duration, err := parseDuration([]string{start, end}, assTimeFormat, ap.config.Parameter.SubtitleDelay)
 		if err != nil {
 			return subtitles, err
 		}
